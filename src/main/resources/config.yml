@@ -1,0 +1,22 @@
+vmq:
+  domain: "https://your-vmq-domain.com"
+  key: "your-communication-key"
+  callback:
+    port: 8080
+    path: "/vmq-callback"
+    notifyUrl: ""
+
+projects:
+  project1:
+    name: "项目1"
+    lore: "项目1的描述"
+    #金额
+    amount: 0.01
+    rewards:
+      - "give %player% diamond 1"
+  project2:
+    name: "项目2"
+    lore: "项目2的描述"
+    amount: 2.00
+    rewards:
+      - "give %player% gold_ingot 5"
