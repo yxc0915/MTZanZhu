@@ -630,9 +630,8 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
                     String msg = jsonResponse.has("msg") ? jsonResponse.get("msg").getAsString() : "未知错误";
 
                     if (code == -1 && !msg.contains("订单未支付")) {
-                        // 对于 code=-1 且不是"订单未支付"的情况，从 players.yml 中移除
-                        removeOrderFromPlayersYml(orderId);
-                        getLogger().info("已从 players.yml 中移除订单: " + orderId + ", 原因: " + msg);
+                        // 对于 code=-1 且不是"订单未支付"的情况，从 players.yml 和内存中移除
+                        removeAbnormalOrder(orderId, msg);
                         return;
                     }
 
@@ -658,20 +657,40 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
         });
     }
 
-    private void removeOrderFromPlayersYml(String orderId) {
-        File file = new File(getDataFolder(), "players.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        boolean changed = false;
+    private void removeAbnormalOrder(String orderId, String reason) {
+        // 从 players.yml 中移除
+        removeOrderFromPlayersYml(orderId);
 
-        for (String key : config.getKeys(false)) {
-            if (orderId.equals(config.getString(key + ".orderId"))) {
-                config.set(key, null);
-                changed = true;
+        // 从内存中的 Map 移除
+        for (Map.Entry<UUID, String> entry : playerPendingOrders.entrySet()) {
+            if (entry.getValue().equals(orderId)) {
+                UUID playerUUID = entry.getKey();
+                playerPendingOrders.remove(playerUUID);
+                orderMap.remove(orderId);
+                orderPrice.remove(orderId);
+                getLogger().info("已从内存中移除异常订单: " + orderId + ", 玩家UUID: " + playerUUID);
                 break;
             }
         }
 
-        if (changed) {
+        getLogger().info("已移除异常订单: " + orderId + ", 原因: " + reason);
+    }
+
+
+    private UUID removeOrderFromPlayersYml(String orderId) {
+        File file = new File(getDataFolder(), "players.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        UUID removedUUID = null;
+
+        for (String key : config.getKeys(false)) {
+            if (orderId.equals(config.getString(key + ".orderId"))) {
+                config.set(key, null);
+                removedUUID = UUID.fromString(key);
+                break;
+            }
+        }
+
+        if (removedUUID != null) {
             try {
                 config.save(file);
                 getLogger().info("已从 players.yml 中移除订单: " + orderId);
@@ -679,7 +698,10 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
                 getLogger().log(Level.SEVERE, "从 players.yml 移除订单 " + orderId + " 时发生错误", e);
             }
         }
+
+        return removedUUID;
     }
+
 
 
     private void handleSuccessfulOrder(JsonObject jsonResponse, String orderId) {
