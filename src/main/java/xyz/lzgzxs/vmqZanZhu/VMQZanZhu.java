@@ -629,6 +629,13 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
                     int code = jsonResponse.get("code").getAsInt();
                     String msg = jsonResponse.has("msg") ? jsonResponse.get("msg").getAsString() : "未知错误";
 
+                    if (code == -1 && !msg.contains("订单未支付")) {
+                        // 对于 code=-1 且不是"订单未支付"的情况，从 players.yml 中移除
+                        removeOrderFromPlayersYml(orderId);
+                        getLogger().info("已从 players.yml 中移除订单: " + orderId + ", 原因: " + msg);
+                        return;
+                    }
+
                     if (msg.contains("订单未支付")) {
                         getLogger().info("订单未支付，已加载: " + orderId);
                         return; // 如果订单未支付，直接返回，不做其他处理
@@ -639,11 +646,8 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
 
                     if (code == 1) {
                         handleSuccessfulOrder(jsonResponse, orderId);
-                    } else if (code == -1) {
-                        handleFailedOrder(orderId, msg);
                     } else {
-                        getLogger().warning("订单状态错误: " + orderId + ", 原因: " + msg);
-                        saveOrderHistory(orderId, "unknown", "unknown", false);
+                        handleFailedOrder(orderId, msg);
                     }
                 } else {
                     getLogger().warning("查询订单状态返回的数据格式无效: " + response.body());
@@ -653,6 +657,30 @@ public class VMQZanZhu extends JavaPlugin implements TabExecutor {
             }
         });
     }
+
+    private void removeOrderFromPlayersYml(String orderId) {
+        File file = new File(getDataFolder(), "players.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        boolean changed = false;
+
+        for (String key : config.getKeys(false)) {
+            if (orderId.equals(config.getString(key + ".orderId"))) {
+                config.set(key, null);
+                changed = true;
+                break;
+            }
+        }
+
+        if (changed) {
+            try {
+                config.save(file);
+                getLogger().info("已从 players.yml 中移除订单: " + orderId);
+            } catch (IOException e) {
+                getLogger().log(Level.SEVERE, "从 players.yml 移除订单 " + orderId + " 时发生错误", e);
+            }
+        }
+    }
+
 
     private void handleSuccessfulOrder(JsonObject jsonResponse, String orderId) {
         if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
