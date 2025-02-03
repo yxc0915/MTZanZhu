@@ -6,6 +6,8 @@
 [![GitHub Stars](https://img.shields.io/github/stars/YourGitHubName/VMQZanZhu?style=social)](https://github.com/YourGitHubName/VMQZanZhu)
 
 一款基于 **V免签** 的零手续费Minecraft赞助插件，支持微信/支付宝支付，无需官方、第三方API！
+![3ac6da50-ff17-4fbd-ba45-e05d3e7147ca_0](https://github.com/user-attachments/assets/69b6f3de-caf6-4d78-a675-13d20bfee09e)
+
 
 ---
 
