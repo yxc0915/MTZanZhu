@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/YourGitHubName/VMQZanZhu?style=social)](https://github.com/YourGitHubName/VMQZanZhu)
 
-一款基于 **V免签** 的零手续费《我的世界》赞助插件，支持微信/支付宝支付，无需官方API！
+一款基于 **V免签** 的零手续费Minecraft赞助插件，支持微信/支付宝支付，无需官方、第三方API！
 
 ---
 
