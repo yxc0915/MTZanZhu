@@ -1,6 +1,6 @@
-name: VMQZanZhu
+name: MTZanZhu
 version: '1.0-SNAPSHOT'
-main: xyz.lzgzxs.vmqZanZhu.VMQZanZhu
+main: xyz.lzgzxs.mtZanZhu.MTZanZhu
 api-version: '1.21'
 folia-supported: true
 commands:
@@ -10,4 +10,7 @@ commands:
   vmqreload:
     description: 重载插件配置
     usage: /<command>
-    permission: vmqzanzhu.admin
+    permission: mtzanzhu.admin
+  vmqprice:
+    description: 创建自定义金额的赞助订单
+    usage: /<command> <金额> [支付方式]

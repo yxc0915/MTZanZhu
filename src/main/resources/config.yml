@@ -20,3 +20,11 @@ projects:
     amount: 2.00
     rewards:
       - "give %player% gold_ingot 5"
+
+custom_price_command:
+  enabled: true
+  name: vmqprice
+  rewards:
+    - "give %player% diamond %finalprice%"
+    - "title %player% \"&a感谢赞助\" \"&e赞助金额: %finalprice%元\""
+    - "broadcast &6玩家 %player% 赞助了 %finalprice% 元！"
