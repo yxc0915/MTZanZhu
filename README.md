@@ -2,7 +2,7 @@
 
 [![Java Version](https://img.shields.io/badge/Java-JDK21-red?logo=java)](https://www.oracle.com/java/)
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.x-blue?logo=curseforge)](https://papermc.io/downloads)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache-green)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/YourGitHubName/VMQZanZhu?style=social)](https://github.com/YourGitHubName/VMQZanZhu)
 
 一款基于 **V免签** 的零手续费Minecraft赞助插件，支持微信/支付宝支付，无需官方、第三方API！
