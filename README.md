@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/badge/License-Apache-green)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/YourGitHubName/VMQZanZhu?style=social)](https://github.com/YourGitHubName/VMQZanZhu)
 
-<img src="https://github.com/user-attachments/assets/69b6f3de-caf6-4d78-a675-13d20bfee09e" alt="插件图标" width="100" height="100" style="vertical-align: middle;">一款基于 **V免签** 的零手续费Minecraft赞助插件，支持微信/支付宝支付，无需官方、第三方API！
+<img src="https://github.com/user-attachments/assets/69b6f3de-caf6-4d78-a675-13d20bfee09e" alt="插件图标" width="100" height="100" style="vertical-align: middle;">
+
+一款基于 **V免签** 的零手续费Minecraft赞助插件，支持微信/支付宝支付，无需官方、第三方API！
 
 
 ---
