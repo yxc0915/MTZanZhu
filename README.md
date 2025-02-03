@@ -1,105 +1,132 @@
-# VMQZanZhu
-一款基于V免签订单系统的我的世界赞助插件
+# MT ZanZhu  枫迹赞助插件~ 🎮💳
 
+[![Java Version](https://img.shields.io/badge/Java-JDK21-red?logo=java)](https://www.oracle.com/java/)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.x-blue?logo=curseforge)](https://papermc.io/downloads)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/YourGitHubName/VMQZanZhu?style=social)](https://github.com/YourGitHubName/VMQZanZhu)
 
-# 工作流程
-
-### 1. **插件启动**
-- 插件启动时，会加载配置文件（`config.yml`），读取以下关键配置：
-  - `vmq.domain`：VMQ 的 API 地址。
-  - `vmq.key`：VMQ 的密钥，用于签名验证。
-  - `vmq.callback.port`：回调服务器的端口（默认 8080）。
-  - `vmq.callback.path`：回调服务器的路径（默认 `/vmq-callback`）。
-  - `vmq.callback.notifyUrl`：回调地址（可选，如果未配置则使用默认地址）。
-- 如果未配置 `notifyUrl`，插件会尝试获取本机 IP 地址，并结合端口和路径生成默认回调地址（如 `http://192.168.1.100:8080/vmq-callback`）。
-- 启动回调服务器，监听指定端口和路径，等待 VMQ 的回调请求。
+一款基于 **V免签** 的零手续费《我的世界》赞助插件，支持微信/支付宝支付，无需官方API！
 
 ---
 
-### 2. **玩家创建订单**
-- 玩家使用 `/openvmq <项目名> [支付方式]` 命令创建订单。
-  - `<项目名>`：赞助项目的唯一标识（如 `vip1`）。
-  - `[支付方式]`：可选参数，支持 `wx`（微信）或 `zfb`（支付宝），默认为支付宝。
-- 插件会根据项目名查找对应的赞助项目配置（包括项目名称、描述、金额和奖励）。
-- 插件生成一个唯一的订单 ID（`payId`），并将订单信息（包括玩家、赞助项目和订单 ID）存储在一个 `Map` 中。
-- 插件向 VMQ 发送创建订单的请求，请求中包含以下参数：
-  - `payId`：订单 ID。
-  - `param`：玩家名称。
-  - `type`：支付类型（1 为微信，2 为支付宝）。
-  - `price`：订单金额。
-  - `sign`：签名（通过 `payId + param + type + price + vmqKey` 计算 MD5）。
-  - `notifyUrl`：回调地址。
-- 如果请求成功，VMQ 会返回一个支付链接（`payUrl`），插件将该链接发送给玩家，玩家可以通过微信或支付宝扫描二维码完成支付。
+## 📖 目录
+- [✨ 特性](#-特性)
+- [⚙️ 依赖环境](#️-依赖环境)
+- [📦 安装指南](#-安装指南)
+- [🔧 配置文件](#-配置文件)
+- [🔄 工作流程](#-工作流程)
+- [💡 示例场景](#-示例场景)
+- [🤝 贡献指南](#-贡献指南)
+- [📄 许可证](#-许可证)
 
 ---
 
-### 3. **VMQ 回调通知**
-- 当玩家完成支付后，VMQ 会向插件配置的回调地址（`notifyUrl`）发送一个 `GET` 请求，通知插件订单已完成支付。
-- 回调请求中包含以下参数：
-  - `payId`：订单 ID。
-  - `param`：玩家名称。
-  - `type`：支付类型。
-  - `price`：订单金额。
-  - `reallyPrice`：实际支付金额。
-  - `sign`：签名（通过 `payId + param + type + price + reallyPrice + vmqKey` 计算 MD5）。
-- 插件接收到回调请求后，会进行以下操作：
-  1. **验证签名**：
-     - 使用相同的算法计算签名，并与回调请求中的签名进行比对，确保请求的合法性。
-  2. **查找订单信息**：
-     - 通过订单 ID（`payId`）从 `Map` 中查找对应的订单信息（包括玩家和赞助项目）。
-  3. **发放奖励**：
-     - 如果找到订单信息且玩家在线，插件会异步执行赞助项目配置的奖励命令（如给予玩家 VIP 权限、游戏币等）。
-  4. **返回响应**：
-     - 如果处理成功，插件会返回 `success`；如果签名验证失败或订单信息不存在，则返回 `error_sign` 或 `missing_parameters`。
+## ✨ 特性
+- ✅ **零手续费** - 基于 V免签系统，绕过官方支付接口
+- ✅ **双端支付** - 支持微信/支付宝扫码支付
+- ✅ **离线奖励** - 玩家离线时自动暂存奖励，上线后补发
+- ✅ **自定义金额** - 支持玩家自定义赞助金额
+- ✅ **多项目管理** - 可配置多个赞助项目，每个项目独立奖励
+- ✅ **实时回调** - 异步处理支付回调，确保服务器性能
 
 ---
 
-### 4. **奖励发放**
-- 插件根据赞助项目配置的奖励命令，逐个执行以下操作：
-  - 将命令中的占位符（如 `%player%`）替换为玩家的名称。
-  - 通过服务器控制台执行命令（如 `give %player% diamond 64`）。
-- 奖励发放完成后，插件会向玩家发送一条消息，提示奖励已发放。
+## ⚙️ 依赖环境
+| 组件              | 最低要求           |
+|-------------------|--------------------|
+| Java              | JDK 21             |
+| Minecraft Server  | Paper 1.21.x       |
+| V免签系统          | v1.13+             |
+
+> 📌 确保已正确配置 [V免签PHP版](https://github.com/szvone/vmqphp)
 
 ---
 
-### 5. **插件重载**
-- 管理员可以使用 `/vmqreload` 命令重载插件配置。
-- 插件会重新加载 `config.yml` 文件，更新赞助项目配置和回调服务器设置。
+## 📦 安装指南
+1. 下载最新版本插件：[Releases](https://github.com/yxc0915/MTZanZhu/releases)
+2. 将插件放入服务器 `plugins` 目录
+3. 修改配置文件 [`config.yml`](docs/CONFIG.md#基础配置)
+4. 重启服务器
 
----
-
-### 6. **插件关闭**
-- 当插件关闭时，回调服务器会停止运行，释放占用的端口资源。
-
----
-
-### 流程图
-
-```plaintext
-+-------------------+       +-------------------+       +-------------------+
-| 玩家创建订单        |       | VMQ 处理支付       |       | 插件处理回调        |
-| - 输入命令         | ----> | - 生成支付链接     | ----> | - 验证签名         |
-| - 生成订单 ID      |       | - 等待玩家支付     |       | - 查找订单信息     |
-| - 发送创建订单请求 |       | - 支付完成后回调   |       | - 发放奖励         |
-+-------------------+       +-------------------+       +-------------------+
+```bash
+# 首次启动后生成的配置文件结构
+plugins/VMQZanZhu/
+├── config.yml       # 主配置文件
+├── players.yml      # 玩家订单记录
+├── history.yml      # 支付历史
+└── pending-rewards.yml # 待发放奖励
 ```
 
 ---
 
-### 示例场景
+## 🔧 配置文件
 
-1. **玩家创建订单**：
-   - 玩家 A 输入命令 `/openvmq vip1 zfb`。
-   - 插件生成订单 ID `123456789`，并向 VMQ 发送创建订单请求。
-   - VMQ 返回支付链接，玩家 A 使用支付宝扫描二维码完成支付。
+示例配置片段：
+```yaml
+vmq:
+  domain: "https://your-vmq-domain.com"
+  ###你的V免签后台网址
+  key: "your-secret-key"
+  ###你的V免签通信密钥
+  callback:
+    port: 8080
+    path: "/vmq-callback"
+  ###自定义本地回调服务运行端口
+  notifyUrl:
+  ###如果是内网穿透请在此设置内网穿透后的网址（确保本地端口和回调服务端口一致，TCP协议）
 
-2. **VMQ 回调通知**：
-   - 玩家 A 支付完成后，VMQ 向插件的回调地址发送请求：
-     ```
-     GET /vmq-callback?payId=123456789&param=玩家A&type=2&price=100.00&reallyPrice=100.00&sign=xxxxxx
-     ```
-   - 插件验证签名并通过订单 ID 找到玩家 A 和赞助项目 `vip1`。
-   - 插件执行奖励命令（如 `give 玩家A diamond 64`），并向玩家 A 发送奖励已发放的消息。
+projects:
+  vip1:
+    name: "基础赞助包"
+    amount: 10.00
+    rewards:
+      - "give %player% diamond 64"
+      - "lp user %player% permission set vip true"
+```
 
-3. **奖励发放**：
-   - 玩家 A 收到 64 个钻石，并看到提示消息：“奖励已发放，感谢您的赞助！”
+---
+
+## 🔄 工作流程
+```mermaid
+sequenceDiagram
+  participant 玩家
+  participant 插件
+  participant V免签系统
+  
+  玩家->>插件: /openvmq vip1 zfb
+  插件->>V免签系统: 创建订单请求
+  V免签系统-->>插件: 返回支付链接
+  插件->>玩家: 显示支付二维码
+  玩家->>V免签系统: 完成支付
+  V免签系统->>插件: 回调通知
+  插件->>服务器: 执行奖励命令
+  插件->>玩家: 发送奖励通知
+```
+
+详细流程图：[工作流程详解](docs/WORKFLOW.md)
+
+---
+
+## 💡 示例场景
+### 场景1：玩家赞助VIP
+1. 玩家输入 `/openvmq vip1 zfb`
+2. 生成支付宝付款码，支付¥10.00
+3. 支付成功后，玩家自动获得：
+   - 64颗钻石
+   - VIP权限
+
+### 场景2：自定义金额赞助
+1. 玩家输入 `/vmqprice 50 wx`
+2. 生成微信付款码，支付¥50.00
+3. 服务器广播感谢消息，并给予对应钻石奖励
+
+---
+
+## 🤝 贡献指南
+欢迎提交 Pull Request！
+遇到问题？[提交 Issue](https://github.com/yxc0915/MTZanZhu/issues)
+
+---
+
+## 📄 许可证
+本项目采用 [MIT License](LICENSE) 开源协议
