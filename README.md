@@ -1,7 +1,7 @@
 # MT ZanZhu  枫迹赞助插件~ 🎮💳
 
 [![Java Version](https://img.shields.io/badge/Java-JDK21-red?logo=java)](https://www.oracle.com/java/)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.x-blue?logo=curseforge)](https://papermc.io/downloads)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.x-blue?logo=paper)](https://papermc.io/downloads)
 [![License](https://img.shields.io/badge/License-Apache2.0-green)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/yxc0915/MTZanZhu?style=social)](https://github.com/yxc0915/MTZanZhu)
 
