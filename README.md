@@ -110,7 +110,7 @@ sequenceDiagram
   插件->>玩家: 发送奖励通知
 ```
 
-详细流程图：[工作流程详解](docs/WORKFLOW.md)
+详细流程图：[工作流程详解](doc/WORKFLOW.md)
 
 ---
 
